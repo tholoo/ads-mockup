@@ -7,13 +7,13 @@ class Ad(BaseAdvertising):
         self,
         id: int,
         title: str,
-        imgUrl: str,
+        img_url: str,
         link: str,
         advertiser: Advertiser,
         clicks: int = 0,
         views: int = 0,
     ) -> None:
-        self._imgUrl = imgUrl
+        self._img_url = img_url
         self._link = link
         self._advertiser = advertiser
         super().__init__(id, title, clicks, views)
@@ -22,10 +22,10 @@ class Ad(BaseAdvertising):
         self._name = title
 
     def get_img_url(self) -> str:
-        return self._imgUrl
+        return self._img_url
 
     def set_img_url(self, url: str) -> None:
-        self._imgUrl = url
+        self._img_url = url
 
     def get_link(self) -> str:
         return self._link
