@@ -4,9 +4,6 @@ from base_model import BaseAdvertising
 class Advertiser(BaseAdvertising):
     __total_clicks: int = 0
 
-    def __init__(self, id: int, name: str, clicks: int = 0, views: int = 0) -> None:
-        super().__init__(id, name, clicks, views)
-
     @staticmethod
     def get_total_clicks() -> int:
         return Advertiser.__total_clicks
