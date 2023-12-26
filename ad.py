@@ -10,13 +10,11 @@ class Ad(BaseAdvertising):
         img_url: str,
         link: str,
         advertiser: Advertiser,
-        clicks: int = 0,
-        views: int = 0,
     ) -> None:
+        super().__init__(id, title)
         self._img_url = img_url
         self._link = link
         self._advertiser = advertiser
-        super().__init__(id, title, clicks, views)
 
     def set_title(self, title: str) -> None:
         self._name = title

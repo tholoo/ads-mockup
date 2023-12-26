@@ -1,11 +1,9 @@
 class BaseAdvertising:
-    def __init__(
-        self, id: int = -1, name: str = "UNDEFINED", clicks: int = 0, views: int = 0
-    ) -> None:
+    def __init__(self, id: int, name: str) -> None:
         self._id = id
         self._name = name
-        self._clicks = clicks
-        self._views = views
+        self._clicks = 0
+        self._views = 0
 
     def __str__(self) -> str:
         return f"{self._name} has {self._clicks} clicks and {self._views} views"
