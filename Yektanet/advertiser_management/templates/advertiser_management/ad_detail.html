@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    crossorigin="anonymous">
+  <title>Ad View</title>
+</head>
+
+<body>
+  <div class="container" dir="rtl">
+    <h1>
+      <a href="{% url 'advertiser_management:ads_click' ad.id %}">
+        <span>{{ ad.title }}</span>
+        <img src="{{ ad.img_url }}" class="card-img-top">
+      </a>
+    </h1>
+    <h3>Hourly Views</h3>
+    {% for view in views_hourly %}
+    <ul>
+      <li>Hour: {{ view.hour }} - Count: {{ view.count }}</li>
+    </ul>
+    {% endfor %}
+
+    <h3>Hourly Clicks</h3>
+    {% for click in clicks_hourly %}
+    <ul>
+      <li>Hour: {{ click.hour }} - Count: {{ click.count }}</li>
+    </ul>
+    {% endfor %}
+
+    <h3>Click Rate</h3>
+    <p>Clickrate: {{ click_rate_all }}</p>
+    {% for click in click_rate_hourly %}
+    <ul>
+      <li>Hour: {{ click.hour }} - Rate: {{ click.click_rate }}</li>
+    </ul>
+    {% endfor %}
+
+    <h3>Average Click Time</h3>
+    <p>Average click time: {{ avg_click_time }} seconds</p>
+  </div>
+</body>
+
+</html>
