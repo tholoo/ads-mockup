@@ -4,8 +4,6 @@ from django.db.models import F
 
 class Advertiser(models.Model):
     name = models.CharField(max_length=200)
-    clicks = models.PositiveIntegerField(default=0)
-    views = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return f"({self.id}) {self.name}"
@@ -18,16 +16,28 @@ class Ad(models.Model):
     advertiser = models.ForeignKey(
         Advertiser, related_name="ads", on_delete=models.CASCADE
     )
-    clicks = models.PositiveIntegerField(default=0)
-    views = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return f"({self.id}) {self.title} - {self.advertiser.name}"
 
-    @transaction.atomic
-    def inc_clicks(self):
-        self.clicks = F("clicks") + 1
-        self.save()
 
-        self.advertiser.clicks = F("clicks") + 1
-        self.advertiser.save()
+class AdClick(models.Model):
+    ad = models.ForeignKey(
+        "advertiser_management.Ad", related_name="clicks", on_delete=models.CASCADE
+    )
+    ip = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"({self.id}) {self.ad.title}"
+
+
+class AdView(models.Model):
+    ad = models.ForeignKey(
+        "advertiser_management.Ad", related_name="views", on_delete=models.CASCADE
+    )
+    ip = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"({self.id}) {self.ad.title}"

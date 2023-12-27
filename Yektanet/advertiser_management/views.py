@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.views.generic import FormView, RedirectView, TemplateView
 
 from .forms import AdForm
-from .models import Ad, Advertiser
+from .models import Ad, Advertiser, AdClick, AdView
 
 
 class AdvertiserView(TemplateView):
@@ -15,9 +15,10 @@ class AdvertiserView(TemplateView):
         context = super().get_context_data(**kwargs)
 
         advertisers = Advertiser.objects.prefetch_related("ads").all()
-        with transaction.atomic():
-            Advertiser.objects.all().update(views=F("views") + 1)
-            Ad.objects.all().update(views=F("views") + 1)
+
+        # add a view for each ad
+        ip = self.request.META.get("REMOTE_ADDR")
+        AdView.objects.bulk_create([AdView(ad=ad, ip=ip) for ad in Ad.objects.all()])
 
         context["advertisers"] = advertisers
         return context
@@ -26,7 +27,11 @@ class AdvertiserView(TemplateView):
 class AdRedirectView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         ad = get_object_or_404(Ad, pk=kwargs["pk"])
-        ad.inc_clicks()
+
+        # record a click for the ad
+        ip = self.request.META.get("REMOTE_ADDR")
+        AdClick.objects.create(ad=ad, ip=ip)
+
         return ad.link
 
 
