@@ -13,7 +13,6 @@ class AdvertiserView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        print(context)
 
         advertisers = Advertiser.objects.prefetch_related("ads").all()
         with transaction.atomic():
