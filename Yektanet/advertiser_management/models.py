@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction
 from django.db.models import F
 
 
@@ -24,7 +24,10 @@ class Ad(models.Model):
     def __str__(self):
         return f"({self.id}) {self.title} - {self.advertiser.name}"
 
+    @transaction.atomic
     def inc_clicks(self):
-        Ad.objects.filter(pk=self.pk).update(clicks=F("clicks") + 1)
+        self.clicks = F("clicks") + 1
+        self.save()
+
         self.advertiser.clicks = F("clicks") + 1
         self.advertiser.save()

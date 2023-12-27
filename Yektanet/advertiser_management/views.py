@@ -1,22 +1,27 @@
-from django.shortcuts import get_object_or_404, render
-from django.urls import reverse
-from django.http import HttpResponseRedirect
-from django.views.generic import RedirectView, View
+from django.db import transaction
 from django.db.models import F
+from django.shortcuts import get_object_or_404
+from django.urls import reverse_lazy
+from django.views.generic import FormView, RedirectView, TemplateView
 
 from .forms import AdForm
 from .models import Ad, Advertiser
 
 
-class AdvertiserView(View):
+class AdvertiserView(TemplateView):
     template_name = "advertiser_management/ads.html"
 
-    def get(self, request, *args, **kwargs):
-        advertisers = Advertiser.objects.prefetch_related("ads").all()
-        Advertiser.objects.all().update(views=F("views") + 1)
-        Ad.objects.all().update(views=F("views") + 1)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        print(context)
 
-        return render(request, self.template_name, {"advertisers": advertisers})
+        advertisers = Advertiser.objects.prefetch_related("ads").all()
+        with transaction.atomic():
+            Advertiser.objects.all().update(views=F("views") + 1)
+            Ad.objects.all().update(views=F("views") + 1)
+
+        context["advertisers"] = advertisers
+        return context
 
 
 class AdRedirectView(RedirectView):
@@ -26,23 +31,12 @@ class AdRedirectView(RedirectView):
         return ad.link
 
 
-class AdCreateView(View):
+class AdCreateView(FormView):
     form_class = AdForm
     template_name = "advertiser_management/ads_create.html"
+    success_url = reverse_lazy("advertiser_management:ads")
 
-    def get(self, request, *args, **kwargs):
-        form = self.form_class()
-        return render(request, self.template_name, {"form": form})
-
-    def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
-        if not form.is_valid():
-            return render(
-                request,
-                self.template_name,
-                {"form": form, "error_message": "Invalid data"},
-            )
-
+    def form_valid(self, form):
         title = form.cleaned_data["title"]
         img_url = form.cleaned_data["img_url"]
         link = form.cleaned_data["link"]
@@ -52,4 +46,4 @@ class AdCreateView(View):
         Ad.objects.create(
             title=title, img_url=img_url, link=link, advertiser=advertiser
         )
-        return HttpResponseRedirect(reverse("advertiser_management:ads"))
+        return super().form_valid(form)
