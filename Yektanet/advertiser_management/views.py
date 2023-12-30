@@ -76,8 +76,7 @@ class AdDetailView(DetailView):
         context["click_rate_all"] = ad.clicks.count() / ad.views.count()
         context["click_rate_hourly"] = [
             {"hour": view["hour"], "click_rate": click["count"] / view["count"]}
-            for view in views_hourly
-            for click in clicks_hourly
+            for view, click in zip(views_hourly, clicks_hourly)
         ]
 
         # get the last view before each click
