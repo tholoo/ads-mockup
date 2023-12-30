@@ -43,8 +43,7 @@ class Ad(models.Model):
         clicks_hourly = self.get_hourly_stats(self.clicks)
         return [
             {"hour": view["hour"], "click_rate": click["count"] / view["count"]}
-            for view in views_hourly
-            for click in clicks_hourly
+            for view, click in zip(views_hourly, clicks_hourly)
         ]
 
     def get_avg_click_time(self):
