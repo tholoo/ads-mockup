@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import RetrieveAPIView, CreateAPIView
 
 from .models import Ad, AdClick, Advertiser, AdView
 from .serializers import AdSerializer, AdvertiserSerializer
@@ -31,16 +32,11 @@ class AdRedirectView(APIView):
         return Response({"redirect_to": ad.link}, status=status.HTTP_302_FOUND)
 
 
-class AdAPIView(APIView):
-    def get(self, request, pk):
-        ad = get_object_or_404(Ad, pk=pk)
-        serializer = AdSerializer(ad)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+class AdCreateAPIView(CreateAPIView):
+    queryset = Ad.objects.all()
+    serializer_class = AdSerializer
 
-    def post(self, request):
-        serializer = AdSerializer(data=request.data)
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        ad = serializer.save()
-        return Response(AdSerializer(ad).data, status=status.HTTP_201_CREATED)
+class AdRetrieveAPIView(RetrieveAPIView):
+    queryset = Ad.objects.all()
+    serializer_class = AdSerializer
