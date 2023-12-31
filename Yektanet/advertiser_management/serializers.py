@@ -34,12 +34,6 @@ class AdSerializer(serializers.ModelSerializer):
             "avg_click_time",
         ]
 
-    def create(self, validated_data):
-        advertiser_id = validated_data.pop("advertiser")
-        advertiser = get_object_or_404(Advertiser, pk=advertiser_id)
-        ad = Ad.objects.create(advertiser_id=advertiser, **validated_data)
-        return ad
-
     def get_views_hourly(self, obj):
         return obj.hourly_views
 
