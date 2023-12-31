@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Ad, Advertiser
+from .models import Ad, Advertiser, AdHourlyStat, AdDailyStat
 
 
 @admin.register(Advertiser)
@@ -16,3 +16,7 @@ class AdAdmin(admin.ModelAdmin):
     list_filter = ("advertiser", "approve")
     list_editable = ("approve",)
     search_fields = ("title", "advertiser__name")
+
+
+admin.site.register(AdHourlyStat)
+admin.site.register(AdDailyStat)
