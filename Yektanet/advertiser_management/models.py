@@ -120,14 +120,5 @@ class AdHourlyStat(models.Model):
     class Meta:
         unique_together = ("ad", "date", "hour")
 
-
-class AdDailyStat(models.Model):
-    ad = models.ForeignKey(
-        "advertiser_management.Ad", on_delete=models.CASCADE, related_name="daily_stats"
-    )
-    date = models.DateField()
-    total_clicks = models.IntegerField(default=0)
-    total_views = models.IntegerField(default=0)
-
-    class Meta:
-        unique_together = ("ad", "date")
+    def __str__(self):
+        return f"({self.id}) {self.ad.title} - {self.date} {self.hour}:00"
