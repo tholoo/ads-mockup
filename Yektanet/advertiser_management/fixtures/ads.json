@@ -1,0 +1,76 @@
+[
+  {
+    "model": "advertiser_management.advertiser",
+    "pk": 1,
+    "fields": {
+      "name": "Advertiser 1"
+    }
+  },
+  {
+    "model": "advertiser_management.advertiser",
+    "pk": 2,
+    "fields": {
+      "name": "Advertiser 2"
+    }
+  },
+  {
+    "model": "advertiser_management.ad",
+    "pk": 1,
+    "fields": {
+      "title": "Ad 1",
+      "img_url": "https://via.placeholder.com/150",
+      "link": "http://example.com",
+      "advertiser": 1
+    }
+  },
+  {
+    "model": "advertiser_management.ad",
+    "pk": 2,
+    "fields": {
+      "title": "Ad 2",
+      "img_url": "https://via.placeholder.com/150",
+      "link": "http://example.com",
+      "advertiser": 1
+    }
+  },
+  {
+    "model": "advertiser_management.ad",
+    "pk": 3,
+    "fields": {
+      "title": "Ad 3",
+      "img_url": "https://via.placeholder.com/150",
+      "link": "http://example.com",
+      "advertiser": 1
+    }
+  },
+  {
+    "model": "advertiser_management.ad",
+    "pk": 4,
+    "fields": {
+      "title": "Ad 4",
+      "img_url": "https://via.placeholder.com/150",
+      "link": "http://example.com",
+      "advertiser": 2
+    }
+  },
+  {
+    "model": "advertiser_management.ad",
+    "pk": 5,
+    "fields": {
+      "title": "Ad 5",
+      "img_url": "https://via.placeholder.com/150",
+      "link": "http://example.com",
+      "advertiser": 2
+    }
+  },
+  {
+    "model": "advertiser_management.ad",
+    "pk": 6,
+    "fields": {
+      "title": "Ad 6",
+      "img_url": "https://via.placeholder.com/150",
+      "link": "http://example.com",
+      "advertiser": 2
+    }
+  }
+]
