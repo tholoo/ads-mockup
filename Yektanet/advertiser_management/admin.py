@@ -18,5 +18,17 @@ class AdAdmin(admin.ModelAdmin):
     search_fields = ("title", "advertiser__name")
 
 
-admin.site.register(AdHourlyStat)
-admin.site.register(AdDailyStat)
+@admin.register(AdHourlyStat)
+class AdHourlyStatAdmin(admin.ModelAdmin):
+    list_display = ("ad", "hour", "clicks", "views")
+    list_display_links = ("ad",)
+    list_filter = ("ad", "hour")
+    search_fields = ("ad__title", "ad__advertiser__name")
+
+
+@admin.register(AdDailyStat)
+class AdDailyStatAdmin(admin.ModelAdmin):
+    list_display = ("ad", "date", "total_clicks", "total_views")
+    list_display_links = ("ad",)
+    list_filter = ("ad", "date")
+    search_fields = ("ad__title", "ad__advertiser__name")
