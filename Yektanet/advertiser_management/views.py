@@ -1,8 +1,12 @@
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import DetailView, FormView, RedirectView, TemplateView
+from django.views.generic import (
+    CreateView,
+    DetailView,
+    RedirectView,
+    TemplateView,
+)
 
-from .forms import AdForm
 from .models import Ad, AdClick, Advertiser, AdView
 
 
@@ -33,22 +37,15 @@ class AdRedirectView(RedirectView):
         return ad.link
 
 
-class AdCreateView(FormView):
-    form_class = AdForm
+class AdCreateView(CreateView):
+    model = Ad
+    fields = ["advertiser", "img_url", "title", "link"]
+    labels = {
+        "img_url": "Image",
+        "link": "URL",
+    }
     template_name = "advertiser_management/ads_create.html"
     success_url = reverse_lazy("advertiser_management:ads")
-
-    def form_valid(self, form):
-        title = form.cleaned_data["title"]
-        img_url = form.cleaned_data["img_url"]
-        link = form.cleaned_data["link"]
-        advertiser_id = form.cleaned_data["advertiser_id"]
-
-        advertiser = get_object_or_404(Advertiser, pk=advertiser_id)
-        Ad.objects.create(
-            title=title, img_url=img_url, link=link, advertiser=advertiser
-        )
-        return super().form_valid(form)
 
 
 class AdDetailView(DetailView):
