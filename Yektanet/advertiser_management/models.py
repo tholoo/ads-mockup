@@ -38,15 +38,29 @@ class Ad(models.Model):
             .order_by("hour")
         )
 
-    def get_click_rate_hourly(self):
-        views_hourly = self.get_hourly_stats(self.views)
-        clicks_hourly = self.get_hourly_stats(self.clicks)
+    @property
+    def hourly_views(self):
+        return self.get_hourly_stats(self.views)
+
+    @property
+    def hourly_clicks(self):
+        return self.get_hourly_stats(self.clicks)
+
+    @property
+    def click_rate(self):
+        return self.clicks.count() / self.views.count()
+
+    @property
+    def hourly_click_rate(self):
+        views_hourly = self.hourly_views
+        clicks_hourly = self.hourly_clicks
         return [
             {"hour": view["hour"], "click_rate": click["count"] / view["count"]}
             for view, click in zip(views_hourly, clicks_hourly)
         ]
 
-    def get_avg_click_time(self):
+    @property
+    def avg_click_time(self):
         last_view_before_click = (
             self.views.filter(ip=OuterRef("ip"), created_at__lte=OuterRef("created_at"))
             .order_by("-created_at")

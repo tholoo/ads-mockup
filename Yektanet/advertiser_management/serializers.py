@@ -41,16 +41,16 @@ class AdSerializer(serializers.ModelSerializer):
         return ad
 
     def get_views_hourly(self, obj):
-        return obj.get_hourly_stats(obj.views)
+        return obj.hourly_views
 
     def get_clicks_hourly(self, obj):
-        return obj.get_hourly_stats(obj.clicks)
+        return obj.hourly_clicks
 
     def get_click_rate_hourly(self, obj):
-        return obj.get_click_rate_hourly()
+        return obj.hourly_click_rate
 
     def get_avg_click_time(self, obj):
-        return obj.get_avg_click_time()
+        return obj.avg_click_time
 
 
 class AdClickSerializer(serializers.ModelSerializer):
