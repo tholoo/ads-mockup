@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Ad, Advertiser, AdHourlyStat, AdDailyStat
+from .models import Ad, Advertiser, AdHourlyStat
 
 
 @admin.register(Advertiser)
@@ -23,12 +23,4 @@ class AdHourlyStatAdmin(admin.ModelAdmin):
     list_display = ("ad", "hour", "clicks", "views")
     list_display_links = ("ad",)
     list_filter = ("ad", "hour")
-    search_fields = ("ad__title", "ad__advertiser__name")
-
-
-@admin.register(AdDailyStat)
-class AdDailyStatAdmin(admin.ModelAdmin):
-    list_display = ("ad", "date", "total_clicks", "total_views")
-    list_display_links = ("ad",)
-    list_filter = ("ad", "date")
     search_fields = ("ad__title", "ad__advertiser__name")
