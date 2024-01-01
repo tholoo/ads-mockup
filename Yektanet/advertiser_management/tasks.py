@@ -9,25 +9,23 @@ from .models import Ad, AdHourlyStat
 
 @shared_task
 def calculate_hourly_stats():
-    now = timezone.now()
-    one_hour_ago = now - timedelta(hours=1)
+    end = timezone.now().replace(minute=0, second=0, microsecond=0)
+    start = end - timedelta(hours=1)
 
     # get the clicks and views of each ad in the past hour
     stats = Ad.objects.annotate(
         past_hour_clicks=Count(
-            "clicks", filter=Q(clicks__created_at__range=[one_hour_ago, now])
+            "clicks", filter=Q(clicks__created_at__range=[start, end])
         ),
-        past_hour_views=Count(
-            "views", filter=Q(views__created_at__range=[one_hour_ago, now])
-        ),
+        past_hour_views=Count("views", filter=Q(views__created_at__range=[start, end])),
     ).values("id", "past_hour_clicks", "past_hour_views")
 
     # prepare data to bulk create
     to_create = [
         AdHourlyStat(
             ad_id=stat["id"],
-            date=now.date(),
-            hour=now.hour,
+            date=start.date(),
+            hour=start.hour,
             clicks=stat["past_hour_clicks"],
             views=stat["past_hour_views"],
         )
@@ -39,14 +37,14 @@ def calculate_hourly_stats():
 
 @shared_task
 def calculate_daily_stats():
-    now = timezone.now()
+    end = timezone.now().date()
 
     # since this task runs at midnight, we need the previous day's date
-    one_day_ago = now - timedelta(days=1)
+    start = end - timedelta(days=1)
 
     # get the clicks and views of each ad in the past day based on hourly stats
     stats = (
-        AdHourlyStat.objects.filter(date__range=[one_day_ago, now])
+        AdHourlyStat.objects.filter(date__range=[start, end])
         .values("ad_id")
         .annotate(total_clicks=Sum("clicks"), total_views=Sum("views"))
     )
