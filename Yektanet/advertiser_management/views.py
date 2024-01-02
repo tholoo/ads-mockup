@@ -1,64 +1,35 @@
-from django.shortcuts import get_object_or_404
-from django.urls import reverse_lazy
-from django.views.generic import (
-    CreateView,
-    DetailView,
-    RedirectView,
-    TemplateView,
-)
+from rest_framework import status
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
 
 from .models import Ad, AdClick, Advertiser, AdView
+from .serializers import AdSerializer, AdvertiserSerializer
 
 
-class AdvertiserView(TemplateView):
-    template_name = "advertiser_management/ads.html"
+class AdvertiserViewSet(ModelViewSet):
+    queryset = Advertiser.objects.prefetch_related("ads").all()
+    serializer_class = AdvertiserSerializer
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        advertisers = Advertiser.objects.prefetch_related("ads").all()
-
+    def list(self, request, *args, **kwargs):
         # add a view for each ad
-        ip = self.request.META.get("REMOTE_ADDR")
+        ip = request.META.get("REMOTE_ADDR")
         AdView.objects.bulk_create([AdView(ad=ad, ip=ip) for ad in Ad.objects.all()])
 
-        context["advertisers"] = advertisers
-        return context
+        return super().list(request, *args, **kwargs)
 
 
-class AdRedirectView(RedirectView):
-    def get_redirect_url(self, *args, **kwargs):
-        ad = get_object_or_404(Ad, pk=kwargs["pk"])
+class AdViewSet(ModelViewSet):
+    queryset = Ad.objects.all()
+    serializer_class = AdSerializer
 
-        # record a click for the ad
-        ip = self.request.META.get("REMOTE_ADDR")
+    # redirect on /ads/<pk>/click/
+    @action(detail=True, methods=["get"], url_path="click")
+    def click(self, request, pk=None):
+        ad = self.get_object()
+
+        # Record a click for the ad
+        ip = request.META.get("REMOTE_ADDR")
         AdClick.objects.create(ad=ad, ip=ip)
 
-        return ad.link
-
-
-class AdCreateView(CreateView):
-    model = Ad
-    fields = ["advertiser", "img_url", "title", "link"]
-    labels = {
-        "img_url": "Image",
-        "link": "URL",
-    }
-    template_name = "advertiser_management/ads_create.html"
-    success_url = reverse_lazy("advertiser_management:ads")
-
-
-class AdDetailView(DetailView):
-    model = Ad
-    template_name = "advertiser_management/ad_detail.html"
-    context_object_name = "ad"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        ad = context["ad"]
-        context["views_hourly"] = ad.hourly_views
-        context["clicks_hourly"] = ad.hourly_clicks
-        context["click_rate_all"] = ad.click_rate
-        context["click_rate_hourly"] = ad.hourly_click_rate
-        context["avg_click_time"] = ad.avg_click_time
-        return context
+        return Response({"redirect_to": ad.link}, status=status.HTTP_302_FOUND)
