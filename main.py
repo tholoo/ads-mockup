@@ -4,7 +4,7 @@ from ad import Ad
 
 
 def main():
-    base_advertising = BaseAdvertising()
+    base_advertising = BaseAdvertising(1, "base")
 
     advertiser1 = Advertiser(1, "name1")
     advertiser2 = Advertiser(2, "name2")
