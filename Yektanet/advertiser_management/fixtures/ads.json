@@ -72,5 +72,27 @@
       "link": "http://example.com",
       "advertiser": 2
     }
+  },
+  {
+    "model": "advertiser_management.adhourlystat",
+    "pk": 1,
+    "fields": {
+      "ad": 1,
+      "date": "2023-12-28",
+      "hour": 10,
+      "clicks": 15,
+      "views": 150
+    }
+  },
+  {
+    "model": "advertiser_management.adhourlystat",
+    "pk": 2,
+    "fields": {
+      "ad": 2,
+      "date": "2023-12-13",
+      "hour": 6,
+      "clicks": 70,
+      "views": 205
+    }
   }
 ]
