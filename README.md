@@ -1,1 +1,1 @@
-This is a simple project showcasing inheritance in Python.
+This is a simple prototype of a django ad management backend.
