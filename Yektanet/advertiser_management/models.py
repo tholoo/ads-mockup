@@ -134,7 +134,9 @@ class Ad(models.Model):
 
     @property
     def click_rate(self):
-        return self.clicks.count() / self.views.count()
+        clicks = self.clicks.count()
+        views = self.views.count()
+        return clicks / views if views > 0 else 0
 
     @property
     def hourly_click_rate(self):
