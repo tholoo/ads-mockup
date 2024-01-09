@@ -47,9 +47,6 @@ def consume():
                     )
 
                     # handle cpm transaction
-                    # TODO: what if cost type is suddenly changed?
-                    # To increase precision we could have a counter in the model that increases with each view
-                    # get ads that have gained a 1000 views
                     ads_to_update = (
                         Ad.objects.filter(cost_type="CPM")
                         .annotate(
