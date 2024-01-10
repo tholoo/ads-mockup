@@ -27,7 +27,7 @@ def consume():
                     AdClick.objects.create(ad_id=pk, ip=ip)
 
                     # handle cpc transaction
-                    ad = Ad.objects.get(pk=pk)
+                    ad = Ad.objects.select_for_update(pk=pk)
                     if ad.cost_type == "CPC":
                         ad.advertiser.credit = F("credit") - ad.cost
                         ad.advertiser.save()
@@ -73,9 +73,9 @@ def consume():
 
             case Event.ADD_CREDIT:
                 pk, amount = data["pk"], data["amount"]
-                advertiser = Advertiser.objects.get(pk=pk)
-                advertiser.credit = F("credit") + amount
+                with transaction.atomic():
+                    Advertiser.objects.filter(pk=pk).update(credit=F("credit") + amount)
 
-                Transaction.objects.create(
-                    advertiser=advertiser, transaction_type="ADD", amount=amount
-                )
+                    Transaction.objects.create(
+                        advertiser_id=pk, transaction_type="ADD", amount=amount
+                    )
